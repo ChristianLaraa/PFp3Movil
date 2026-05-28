@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "882498730700",
+    "project_id": "dragonballapp-52510",
+    "storage_bucket": "dragonballapp-52510.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:882498730700:android:b2a3041f3cb116d22fe069",
+        "android_client_info": {
+          "package_name": "mx.unam"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKT-KJ1YveNOHY9n1N3yT9cTWBEDKapHw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
