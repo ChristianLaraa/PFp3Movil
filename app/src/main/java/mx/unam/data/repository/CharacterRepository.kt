@@ -10,8 +10,16 @@ class CharacterRepository {
     suspend fun searchCharacters(name: String): Result<List<Character>> {
         return try {
             val response = api.searchCharacters(name.trim())
-            // Como api.searchCharacters devuelve List<Character>, pasamos response directamente
             Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getAllCharacters(page: Int = 1): Result<List<Character>> {
+        return try {
+            val response = api.getAllCharacters(page = page, limit = 50)
+            Result.success(response.items)
         } catch (e: Exception) {
             Result.failure(e)
         }

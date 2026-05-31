@@ -8,13 +8,20 @@ import retrofit2.http.Query
 
 interface DragonBallApiService {
 
-    // GET /api/characters?name=goku
+    // Búsqueda por nombre: devuelve una lista directa [ ... ]
     @GET("characters")
     suspend fun searchCharacters(
         @Query("name") name: String
     ): List<Character>
 
-    // GET /api/characters/1
+    // Catálogo completo: devuelve objeto paginado { "items": [ ... ], "meta": { ... } }
+    @GET("characters")
+    suspend fun getAllCharacters(
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 50
+    ): CharacterResponse
+
+    // Detalle de personaje
     @GET("characters/{id}")
     suspend fun getCharacterById(
         @Path("id") id: Int

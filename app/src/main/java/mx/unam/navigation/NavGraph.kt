@@ -34,8 +34,9 @@ fun NavGraph(navController: NavHostController) {
         composable(Screen.Register.route) {
             RegisterScreen(
                 onRegisterSuccess = {
-                    navController.navigate(Screen.Search.route) {
-                        popUpTo(Screen.Login.route) { inclusive = true }
+                    // Al registrarse con éxito, regresamos al Login
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(Screen.Register.route) { inclusive = true }
                     }
                 },
                 onBack = { navController.popBackStack() }

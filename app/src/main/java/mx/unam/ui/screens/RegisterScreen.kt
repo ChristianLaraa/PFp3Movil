@@ -14,11 +14,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,8 +33,48 @@ fun RegisterScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    LaunchedEffect(state.success) {
-        if (state.success) onRegisterSuccess()
+    // Mostramos la alerta de forma prominente si isRegisterSuccess es true
+    if (state.isRegisterSuccess) {
+        AlertDialog(
+            onDismissRequest = { /* Obligamos a interactuar con el botón */ },
+            icon = { 
+                Icon(
+                    imageVector = Icons.Default.CheckCircle, 
+                    contentDescription = null, 
+                    tint = Color(0xFF4CAF50), 
+                    modifier = Modifier.size(64.dp)
+                ) 
+            },
+            title = { 
+                Text(
+                    "¡REGISTRO COMPLETADO!", 
+                    fontWeight = FontWeight.Black,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) 
+            },
+            text = { 
+                Text(
+                    "Tu cuenta se ha creado correctamente en Firebase. Ahora serás redirigido al inicio de sesión.",
+                    textAlign = TextAlign.Center,
+                    fontSize = 16.sp,
+                    modifier = Modifier.fillMaxWidth()
+                ) 
+            },
+            confirmButton = {
+                Button(
+                    onClick = { 
+                        viewModel.resetState() // Limpiamos el estado
+                        onRegisterSuccess()    // Navegamos al login
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Text("ACEPTAR E IR AL LOGIN", fontWeight = FontWeight.Bold)
+                }
+            }
+        )
     }
 
     // Campos del formulario
@@ -72,7 +115,7 @@ fun RegisterScreen(
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text  = "Completa tus datos",
+                text  = "Ingresa tus datos de guerrero",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -100,27 +143,25 @@ fun RegisterScreen(
                         shape         = RoundedCornerShape(12.dp)
                     )
 
-                    // ── Apellido Paterno ────────────────────────────────────────
-                    OutlinedTextField(
-                        value         = apellidoP,
-                        onValueChange = { apellidoP = it },
-                        label         = { Text("Apellido Paterno") },
-                        leadingIcon   = { Icon(Icons.Default.Person, null) },
-                        singleLine    = true,
-                        modifier      = Modifier.fillMaxWidth(),
-                        shape         = RoundedCornerShape(12.dp)
-                    )
-
-                    // ── Apellido Materno ────────────────────────────────────────
-                    OutlinedTextField(
-                        value         = apellidoM,
-                        onValueChange = { apellidoM = it },
-                        label         = { Text("Apellido Materno") },
-                        leadingIcon   = { Icon(Icons.Default.Person, null) },
-                        singleLine    = true,
-                        modifier      = Modifier.fillMaxWidth(),
-                        shape         = RoundedCornerShape(12.dp)
-                    )
+                    // ── Apellidos ──────────────────────────────────────────────
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedTextField(
+                            value         = apellidoP,
+                            onValueChange = { apellidoP = it },
+                            label         = { Text("A. Paterno") },
+                            modifier      = Modifier.weight(1f),
+                            shape         = RoundedCornerShape(12.dp),
+                            singleLine    = true
+                        )
+                        OutlinedTextField(
+                            value         = apellidoM,
+                            onValueChange = { apellidoM = it },
+                            label         = { Text("A. Materno") },
+                            modifier      = Modifier.weight(1f),
+                            shape         = RoundedCornerShape(12.dp),
+                            singleLine    = true
+                        )
+                    }
 
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 

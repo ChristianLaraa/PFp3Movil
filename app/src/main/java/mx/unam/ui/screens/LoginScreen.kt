@@ -2,14 +2,17 @@ package mx.unam.ui.screens
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
@@ -17,6 +20,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -34,9 +39,9 @@ fun LoginScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    // Navegar cuando el login fue exitoso
-    LaunchedEffect(state.success) {
-        if (state.success) onLoginSuccess()
+    // Navegar cuando el login fue exitoso (usando isLoginSuccess)
+    LaunchedEffect(state.isLoginSuccess) {
+        if (state.isLoginSuccess) onLoginSuccess()
     }
 
     var email          by remember { mutableStateOf("") }
@@ -57,13 +62,68 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Center
         ) {
 
-            // ── Encabezado ─────────────────────────────────────────────────────
-            Text(
-                text       = "🐉",
-                fontSize   = 64.sp,
-                textAlign  = TextAlign.Center
-            )
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(48.dp))
+
+            // ── Dragon Ball de 4 Estrellas Vectorial (Goku's Heirloom) ─────────
+            Box(
+                modifier = Modifier
+                    .size(110.dp)
+                    .clip(CircleShape)
+                    .background(
+                        Brush.radialGradient(
+                            colors = listOf(
+                                Color(0xFFFFF176), // Brillo central Ki (amarillo claro)
+                                Color(0xFFFFB300), // Tono medio ámbar
+                                Color(0xFFFF6F00)  // Contorno naranja profundo
+                            )
+                        )
+                    )
+                    .border(2.5.dp, Color(0xFFE65100), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                // 4 Estrellas rojas distribuidas en rombo
+                Box(modifier = Modifier.size(50.dp)) {
+                    // Estrella Superior
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = null,
+                        tint = Color(0xFFD50000),
+                        modifier = Modifier
+                            .size(16.dp)
+                            .align(Alignment.TopCenter)
+                    )
+                    // Estrella Izquierda
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = null,
+                        tint = Color(0xFFD50000),
+                        modifier = Modifier
+                            .size(16.dp)
+                            .align(Alignment.CenterStart)
+                    )
+                    // Estrella Derecha
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = null,
+                        tint = Color(0xFFD50000),
+                        modifier = Modifier
+                            .size(16.dp)
+                            .align(Alignment.CenterEnd)
+                    )
+                    // Estrella Inferior
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = null,
+                        tint = Color(0xFFD50000),
+                        modifier = Modifier
+                            .size(16.dp)
+                            .align(Alignment.BottomCenter)
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(18.dp))
+
             Text(
                 text      = "Dragon Ball App",
                 style     = MaterialTheme.typography.headlineMedium,
@@ -76,7 +136,7 @@ fun LoginScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(Modifier.height(40.dp))
+            Spacer(Modifier.height(32.dp))
 
             // ── Tarjeta de formulario ──────────────────────────────────────────
             Card(

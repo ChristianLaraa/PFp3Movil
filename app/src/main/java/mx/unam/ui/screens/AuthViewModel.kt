@@ -10,9 +10,10 @@ import mx.unam.data.model.UserProfile
 import mx.unam.data.repository.AuthRepository
 
 data class AuthUiState(
-    val isLoading : Boolean = false,
-    val success   : Boolean = false,
-    val error     : String? = null
+    val isLoading       : Boolean = false,
+    val isLoginSuccess  : Boolean = false,
+    val isRegisterSuccess : Boolean = false,
+    val error           : String? = null
 )
 
 class AuthViewModel : ViewModel() {
@@ -31,8 +32,12 @@ class AuthViewModel : ViewModel() {
         viewModelScope.launch {
             _state.value = AuthUiState(isLoading = true)
             repo.login(email, password)
-                .onSuccess { _state.value = AuthUiState(success = true) }
-                .onFailure { _state.value = AuthUiState(error = friendlyError(it.message)) }
+                .onSuccess { 
+                    _state.value = AuthUiState(isLoginSuccess = true) 
+                }
+                .onFailure { e ->
+                    _state.value = AuthUiState(error = friendlyError(e.message)) 
+                }
         }
     }
 
@@ -42,13 +47,14 @@ class AuthViewModel : ViewModel() {
         username: String, email: String, password: String
     ) {
         if (listOf(nombre, apellidoP, apellidoM, username, email, password).any { it.isBlank() }) {
-            _state.value = AuthUiState(error = "Completa todos los campos")
+            _state.value = _state.value.copy(error = "Completa todos los campos", isLoading = false)
             return
         }
         if (password.length < 6) {
-            _state.value = AuthUiState(error = "La contraseña debe tener al menos 6 caracteres")
+            _state.value = _state.value.copy(error = "La contraseña debe tener al menos 6 caracteres", isLoading = false)
             return
         }
+        
         viewModelScope.launch {
             _state.value = AuthUiState(isLoading = true)
             val profile = UserProfile(
@@ -59,14 +65,23 @@ class AuthViewModel : ViewModel() {
                 email     = email
             )
             repo.register(email, password, profile)
-                .onSuccess { _state.value = AuthUiState(success = true) }
-                .onFailure { _state.value = AuthUiState(error = friendlyError(it.message)) }
+                .onSuccess { 
+                    _state.value = AuthUiState(isRegisterSuccess = true) 
+                }
+                .onFailure { e ->
+                    _state.value = AuthUiState(error = friendlyError(e.message)) 
+                }
         }
     }
 
-    fun clearError() { _state.value = _state.value.copy(error = null) }
+    fun clearError() { 
+        _state.value = _state.value.copy(error = null) 
+    }
+    
+    fun resetState() {
+        _state.value = AuthUiState()
+    }
 
-    // Traduce mensajes de error de Firebase al español
     private fun friendlyError(msg: String?): String = when {
         msg == null                              -> "Error desconocido"
         "email address is already"  in msg      -> "Este correo ya está registrado"

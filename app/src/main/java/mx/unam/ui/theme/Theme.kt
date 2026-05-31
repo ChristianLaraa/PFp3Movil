@@ -5,17 +5,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-// ── Paleta Dragon Ball ────────────────────────────────────────────────────────
-val OrangeDB      = Color(0xFFFF6B00)   // naranja principal
-val OrangeDark    = Color(0xFFCC5500)
-val OrangeLight   = Color(0xFFFF9A4D)
-val YellowDB      = Color(0xFFFFD600)   // amarillo ki
-val BlueDB        = Color(0xFF0D47A1)   // azul secundario
-val BlueDark      = Color(0xFF1565C0)
-val SurfaceDark   = Color(0xFF1A1A2E)
-val SurfaceCard   = Color(0xFF16213E)
-val BackgroundDark= Color(0xFF0F3460)
-
 private val LightColorScheme = lightColorScheme(
     primary          = OrangeDB,
     onPrimary        = Color.White,
