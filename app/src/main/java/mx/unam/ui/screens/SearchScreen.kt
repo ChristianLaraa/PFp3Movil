@@ -421,6 +421,11 @@ fun CharacterCard(character: Character) {
                         InfoBox("KI MÁXIMO", character.maxKi, Color(0xFFFFD700))
                     }
                     Spacer(Modifier.height(12.dp))
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        InfoBox("AFILIACIÓN", character.affiliation, MaterialTheme.colorScheme.secondary)
+                        InfoBox("SEXO", character.gender, MaterialTheme.colorScheme.secondary)
+                    }
+                    Spacer(Modifier.height(12.dp))
                     Text("BIOGRAFÍA", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                     Text(
                         character.description, 

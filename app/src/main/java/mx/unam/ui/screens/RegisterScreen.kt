@@ -1,6 +1,7 @@
 package mx.unam.ui.screens
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.*
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -15,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -32,11 +34,23 @@ fun RegisterScreen(
     viewModel         : AuthViewModel = viewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val density = LocalDensity.current
+    
+    // Detección de teclado para escalado dinámico (Requiere Edge-to-Edge habilitado)
+    val isKeyboardVisible = WindowInsets.ime.getBottom(density) > 0
+    val scrollState = rememberScrollState()
 
-    // Mostramos la alerta de forma prominente si isRegisterSuccess es true
+    // Factores de escalado dinámico para maximizar visibilidad
+    val topSpacerHeight by animateDpAsState(if (isKeyboardVisible) 4.dp else 24.dp)
+    val cardPadding by animateDpAsState(if (isKeyboardVisible) 14.dp else 24.dp)
+    val fieldArrangement by animateDpAsState(if (isKeyboardVisible) 6.dp else 14.dp)
+    val horizontalMargin by animateDpAsState(if (isKeyboardVisible) 12.dp else 24.dp)
+    val buttonHeight by animateDpAsState(if (isKeyboardVisible) 42.dp else 52.dp)
+
+    // Alerta de éxito
     if (state.isRegisterSuccess) {
         AlertDialog(
-            onDismissRequest = { /* Obligamos a interactuar con el botón */ },
+            onDismissRequest = { },
             icon = { 
                 Icon(
                     imageVector = Icons.Default.CheckCircle, 
@@ -108,28 +122,31 @@ fun RegisterScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
-                .padding(horizontal = 24.dp)
-                .verticalScroll(rememberScrollState()),
+                .imePadding() // Redimensiona el área disponible al activar el teclado
+                .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(topSpacerHeight))
 
             Text(
                 text  = "Ingresa tus datos de guerrero",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                style = if (isKeyboardVisible) MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold) else MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = horizontalMargin)
             )
 
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(topSpacerHeight))
 
             Card(
-                modifier  = Modifier.fillMaxWidth(),
+                modifier  = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = horizontalMargin),
                 shape     = RoundedCornerShape(20.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(24.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                    modifier = Modifier.padding(cardPadding),
+                    verticalArrangement = Arrangement.spacedBy(fieldArrangement)
                 ) {
 
                     // ── Nombre ─────────────────────────────────────────────────
@@ -163,13 +180,13 @@ fun RegisterScreen(
                         )
                     }
 
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, modifier = Modifier.padding(vertical = 2.dp))
 
                     // ── Username ────────────────────────────────────────────────
                     OutlinedTextField(
                         value         = username,
                         onValueChange = { username = it },
-                        label         = { Text("Nombre de usuario") },
+                        label         = { Text("Usuario") },
                         leadingIcon   = { Icon(Icons.Default.AlternateEmail, null) },
                         singleLine    = true,
                         modifier      = Modifier.fillMaxWidth(),
@@ -192,7 +209,7 @@ fun RegisterScreen(
                     OutlinedTextField(
                         value                = password,
                         onValueChange        = { password = it },
-                        label                = { Text("Contraseña (mín. 6 caracteres)") },
+                        label                = { Text("Contraseña") },
                         leadingIcon          = { Icon(Icons.Default.Lock, null) },
                         trailingIcon         = {
                             IconButton(onClick = { passwordVisible = !passwordVisible }) {
@@ -213,19 +230,13 @@ fun RegisterScreen(
 
                     // ── Error ───────────────────────────────────────────────────
                     AnimatedVisibility(visible = state.error != null) {
-                        Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.errorContainer
-                            ),
-                            shape = RoundedCornerShape(8.dp)
-                        ) {
-                            Text(
-                                text     = state.error ?: "",
-                                color    = MaterialTheme.colorScheme.onErrorContainer,
-                                style    = MaterialTheme.typography.bodySmall,
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
-                            )
-                        }
+                        Text(
+                            text     = state.error ?: "",
+                            color    = MaterialTheme.colorScheme.error,
+                            style    = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
                     }
 
                     // ── Botón registrar ─────────────────────────────────────────
@@ -237,7 +248,7 @@ fun RegisterScreen(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(50.dp),
+                            .height(buttonHeight),
                         shape   = RoundedCornerShape(12.dp),
                         enabled = !state.isLoading
                     ) {
@@ -248,7 +259,7 @@ fun RegisterScreen(
                                 strokeWidth = 2.dp
                             )
                         } else {
-                            Text("Crear cuenta", fontWeight = FontWeight.SemiBold)
+                            Text("CREAR CUENTA", fontWeight = FontWeight.Bold)
                         }
                     }
                 }
