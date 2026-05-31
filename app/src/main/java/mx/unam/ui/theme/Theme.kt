@@ -1,58 +1,70 @@
 package mx.unam.ui.theme
 
-import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
+// ── Paleta Dragon Ball ────────────────────────────────────────────────────────
+val OrangeDB      = Color(0xFFFF6B00)   // naranja principal
+val OrangeDark    = Color(0xFFCC5500)
+val OrangeLight   = Color(0xFFFF9A4D)
+val YellowDB      = Color(0xFFFFD600)   // amarillo ki
+val BlueDB        = Color(0xFF0D47A1)   // azul secundario
+val BlueDark      = Color(0xFF1565C0)
+val SurfaceDark   = Color(0xFF1A1A2E)
+val SurfaceCard   = Color(0xFF16213E)
+val BackgroundDark= Color(0xFF0F3460)
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary          = OrangeDB,
+    onPrimary        = Color.White,
+    primaryContainer = OrangeLight,
+    onPrimaryContainer = Color(0xFF3D1600),
+    secondary        = BlueDB,
+    onSecondary      = Color.White,
+    secondaryContainer = Color(0xFFD7E3FF),
+    onSecondaryContainer = Color(0xFF001B3F),
+    background       = Color(0xFFFFF8F5),
+    onBackground     = Color(0xFF1A1A1A),
+    surface          = Color.White,
+    onSurface        = Color(0xFF1A1A1A),
+    surfaceVariant   = Color(0xFFF5E6D8),
+    onSurfaceVariant = Color(0xFF5C3D2E),
+    error            = Color(0xFFBA1A1A),
+    onError          = Color.White,
+    outline          = Color(0xFFB07D5A)
+)
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+private val DarkColorScheme = darkColorScheme(
+    primary          = OrangeLight,
+    onPrimary        = Color(0xFF4A1800),
+    primaryContainer = OrangeDark,
+    onPrimaryContainer = Color(0xFFFFDBCC),
+    secondary        = Color(0xFFAEC6FF),
+    onSecondary      = Color(0xFF002E6A),
+    secondaryContainer = BlueDark,
+    onSecondaryContainer = Color(0xFFD7E3FF),
+    background       = SurfaceDark,
+    onBackground     = Color(0xFFE8E0D8),
+    surface          = SurfaceCard,
+    onSurface        = Color(0xFFE8E0D8),
+    surfaceVariant   = Color(0xFF3D2C1E),
+    onSurfaceVariant = Color(0xFFD9B99A),
+    error            = Color(0xFFFFB4AB),
+    onError          = Color(0xFF690005),
+    outline          = Color(0xFF9A7D65)
 )
 
 @Composable
-fun ProyectoP3Theme(
+fun DragonBallTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
-
+    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
-        content = content
+        typography  = Typography(),
+        content     = content
     )
 }
